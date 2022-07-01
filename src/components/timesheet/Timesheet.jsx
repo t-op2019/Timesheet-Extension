@@ -11,7 +11,7 @@ import "./styles.css";
 
 // api
 import AxiosInstance from "../../utils/axios";
-import { getAPI, postAPI } from "../../api";
+import { getAPI, postAPI, deleteAPI } from "../../api";
 import axiosInstance from "../../utils/axios";
 
 function Timesheet() {
@@ -19,6 +19,7 @@ function Timesheet() {
 
   const [editmode, setEditmode] = useState(false);
   const [viewmode, setViewmode] = useState("Time entry");
+  const [toggleEdit, setToggleEdit] = useState(false);
   const [timesheets, setTimesheets] = useState([]);
   const [allTimesheets, setAllTimesheets] = useState([]);
   const [userMatters, setUserMatters] = useState([]);
@@ -31,64 +32,6 @@ function Timesheet() {
       : viewmode === "All timesheets"
       ? allTimesheets
       : userMatters;
-
-  const columns =
-    viewmode === "All matters"
-      ? [
-          {
-            headerName: "Matter Code",
-            field: "matterCode",
-            width: 230,
-          },
-          {
-            headerName: "Matter Name",
-            field: "matterName",
-            width: 230,
-          },
-        ]
-      : [
-          {
-            headerName: "Matter",
-            field: "matterName",
-            width: 140,
-            renderCell: (param) => {
-              if (param.value == null) {
-                return "";
-              }
-
-              return (
-                <div>
-                  <div className="primary-font">{param.value}</div>
-                  <div style={{ fontSize: 10 }} className="primary-font">
-                    {matterPairs[param.value]}
-                  </div>
-                </div>
-              );
-            },
-          },
-          {
-            headerName: "Description",
-            field: "description",
-            width: 140,
-          },
-          {
-            headerName: "Duration",
-            field: "duration",
-            width: 72,
-          },
-          {
-            headerName: "Date",
-            field: "date",
-            width: 95,
-            valueFormatter: (param) => {
-              if (param.value == null) {
-                return "";
-              }
-
-              return moment(param.value).format("DD/MM/YYYY");
-            },
-          },
-        ];
 
   useEffect(() => {
     fetch();
@@ -110,7 +53,6 @@ function Timesheet() {
     }
 
     dateRangeSearch(dateStart, dateEnd);
-    console.log("fuk");
   }, []);
 
   const fetch = async () => {
@@ -182,6 +124,31 @@ function Timesheet() {
     }
   };
 
+  const deleteTimesheet = async (id) => {
+    try {
+      const idArr = [id];
+      await axiosInstance.delete(deleteAPI().deleteTimesheets, {
+        data: { arrayTimesheets: idArr },
+      });
+
+      const newTimesheets = timesheets.filter(
+        (timesheet) => timesheet._id !== id
+      );
+      setTimesheets(newTimesheets);
+
+      const newAllTimesheets = allTimesheets.filter(
+        (timesheet) => timesheet._id !== id
+      );
+      setAllTimesheets(newAllTimesheets);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const toggle = () => {
+    setToggleEdit(!toggleEdit);
+  };
+
   return (
     <div className="container">
       <div className="title-container">Time Entry</div>
@@ -198,7 +165,15 @@ function Timesheet() {
         />
       )}
 
-      {!editmode && <Table data={data} columns={columns} />}
+      {!editmode && (
+        <Table
+          data={data}
+          viewmode={viewmode}
+          matterPairs={matterPairs}
+          toggle={toggle}
+          deleteTimesheet={deleteTimesheet}
+        />
+      )}
     </div>
   );
 }

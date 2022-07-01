@@ -108,6 +108,13 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
     }));
   };
 
+  const handleKeyPress = (e) => {
+    const { key } = e;
+    if (key === "Enter") {
+      saveNew();
+    }
+  };
+
   const saveNew = () => {
     createTimesheet(data);
     setData({
@@ -190,6 +197,7 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
         placeholder="Description"
         className="input"
         onChange={onChangeDescription}
+        onKeyDown={handleKeyPress}
       />
 
       <div
