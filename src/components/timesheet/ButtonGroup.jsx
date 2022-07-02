@@ -1,6 +1,6 @@
 import React from "react";
 
-function ButtonGroup({ viewmode, setViewmode }) {
+function ButtonGroup({ viewmode, setViewmode, editmode }) {
   const buttons = ["Time entry", "All timesheets", "All matters"];
 
   return (

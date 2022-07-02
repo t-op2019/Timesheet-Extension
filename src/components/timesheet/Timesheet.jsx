@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // components
 import ButtonGroup from "./ButtonGroup";
@@ -10,20 +11,23 @@ import "./styles.css";
 
 // api
 import AxiosInstance from "../../utils/axios";
-import { getAPI, postAPI, deleteAPI } from "../../api";
-import axiosInstance from "../../utils/axios";
+import { getAPI, postAPI, deleteAPI, patchAPI } from "../../api";
+
+// icons
+import LogoutIcon from "@mui/icons-material/Logout";
 
 function Timesheet() {
+  const navigate = useNavigate();
   const dateIndex = [6, 0, 1, 2, 3, 4, 5];
 
   const [editmode, setEditmode] = useState(false);
   const [viewmode, setViewmode] = useState("Time entry");
-  const [toggleEdit, setToggleEdit] = useState(false);
   const [timesheets, setTimesheets] = useState([]);
   const [allTimesheets, setAllTimesheets] = useState([]);
   const [userMatters, setUserMatters] = useState([]);
   const [matterPairs, setMatterPairs] = useState({});
   const [matterNames, setMatterNames] = useState([]);
+  const [selectedTimesheet, setSelectedTimesheet] = useState({});
 
   const data =
     viewmode === "Time entry"
@@ -33,7 +37,8 @@ function Timesheet() {
       : userMatters;
 
   useEffect(() => {
-    fetch();
+    fetchTimesheets();
+    fetchMatters();
 
     const currentDate = new Date();
     // get start date of last week
@@ -54,7 +59,7 @@ function Timesheet() {
     dateRangeSearch(dateStart, dateEnd);
   }, []);
 
-  const fetch = async () => {
+  const fetchMatters = async () => {
     try {
       const resName = await AxiosInstance.get(getAPI().matterNames);
       const names = resName.data.matterName;
@@ -67,6 +72,22 @@ function Timesheet() {
         pairs[name] = codes[index];
       });
       setMatterPairs(pairs);
+    } catch (err) {
+      console.log(err);
+    }
+
+    try {
+      const res = await AxiosInstance.get(getAPI().matters);
+      setUserMatters(res.data.matters);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchTimesheets = async () => {
+    try {
+      const res = await AxiosInstance.get(getAPI().allTimesheets);
+      setAllTimesheets(res.data.timsheets);
     } catch (err) {
       console.log(err);
     }
@@ -91,7 +112,7 @@ function Timesheet() {
     );
 
     try {
-      const res = await axiosInstance.post(postAPI().searchTimesheets, {
+      const res = await AxiosInstance.post(postAPI().searchTimesheets, {
         date1: newDate1,
         date2: newDate2,
         query: "",
@@ -103,8 +124,6 @@ function Timesheet() {
       });
       if (viewmode === "Time entry") {
         setTimesheets(timesheets);
-      } else if (viewmode === "All timesheets") {
-        setAllTimesheets(timesheets);
       }
     } catch (err) {
       console.log(err);
@@ -113,7 +132,7 @@ function Timesheet() {
 
   const createTimesheet = async (data) => {
     try {
-      const res = await axiosInstance.post(postAPI().createTimesheet, data);
+      const res = await AxiosInstance.post(postAPI().createTimesheet, data);
       let timesheet = res.data.timesheet;
       timesheet.id = timesheet._id;
       setTimesheets([res.data.timesheet, ...timesheets]);
@@ -126,7 +145,7 @@ function Timesheet() {
   const deleteTimesheet = async (id) => {
     try {
       const idArr = [id];
-      await axiosInstance.delete(deleteAPI().deleteTimesheets, {
+      await AxiosInstance.delete(deleteAPI().deleteTimesheets, {
         data: { arrayTimesheets: idArr },
       });
 
@@ -144,35 +163,76 @@ function Timesheet() {
     }
   };
 
-  const toggle = () => {
-    setToggleEdit(!toggleEdit);
+  const updateTimesheet = async (timesheet) => {
+    try {
+      await AxiosInstance.patch(
+        patchAPI(timesheet._id).updateTimesheet,
+        timesheet
+      );
+      const newTimesheets = timesheets.map((item) => {
+        if (item._id === timesheet._id) {
+          return timesheet;
+        }
+        return item;
+      });
+      setTimesheets(newTimesheets);
+
+      const newAllTimesheets = allTimesheets.map((item) => {
+        if (item._id === timesheet._id) {
+          return timesheet;
+        }
+        return item;
+      });
+      setAllTimesheets(newAllTimesheets);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCancelSelect = () => {
+    setEditmode(false);
+    setSelectedTimesheet({});
+  };
+
+  const selectTimesheet = (timesheet) => {
+    setEditmode(true);
+    setSelectedTimesheet(timesheet);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   return (
     <div className="container">
       <div className="title-container">Time Entry</div>
 
-      {!editmode && (
-        <ButtonGroup viewmode={viewmode} setViewmode={setViewmode} />
-      )}
+      <a className="logout-button button" onClick={handleLogout}>
+        <LogoutIcon style={{ width: 16 }} />
+      </a>
 
-      {viewmode === "Time entry" && (
+      <ButtonGroup
+        viewmode={viewmode}
+        setViewmode={setViewmode}
+        editmode={editmode}
+      />
+
+      {viewmode !== "All matters" && (
         <TimeEntry
           matterNames={matterNames}
           matterPairs={matterPairs}
           createTimesheet={createTimesheet}
+          deleteTimesheet={deleteTimesheet}
+          updateTimesheet={updateTimesheet}
+          selectedTimesheet={selectedTimesheet}
+          editmode={editmode}
+          cancelSelect={handleCancelSelect}
         />
       )}
 
-      {!editmode && (
-        <Table
-          data={data}
-          viewmode={viewmode}
-          matterPairs={matterPairs}
-          toggle={toggle}
-          deleteTimesheet={deleteTimesheet}
-        />
-      )}
+      <Table data={data} viewmode={viewmode} toggleSelect={selectTimesheet} />
     </div>
   );
 }

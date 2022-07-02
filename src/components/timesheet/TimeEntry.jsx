@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // components
 import TimePicker from "rc-time-picker";
@@ -11,7 +11,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
+function TimeEntry({
+  matterNames,
+  matterPairs,
+  createTimesheet,
+  selectedTimesheet,
+  editmode,
+  deleteTimesheet,
+  updateTimesheet,
+  cancelSelect,
+}) {
   // const role = JSON.parse(localStorage.getItem("user")).role;
   const [selectedValue, setSelectedValue] = useState(
     moment("Thu Dec 30 2021 00:00:00 GMT+0700")
@@ -31,6 +40,26 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
   });
 
   const [isBlurred, setIsBlurred] = useState(true);
+
+  useEffect(() => {
+    if (
+      selectedTimesheet !== undefined &&
+      Object.keys(selectedTimesheet).length > 0
+    ) {
+      let temp = { ...selectedTimesheet };
+      temp.date = new Date(temp.date);
+      setData(temp);
+      setSuggestionState((prevState) => ({
+        ...prevState,
+        value: temp.matterName,
+      }));
+      let date = new Date(selectedValue);
+      date.setMinutes(selectedTimesheet.duration.slice(0, 2));
+      date.setSeconds(selectedTimesheet.duration.slice(3));
+      date = moment(date);
+      setSelectedValue(date);
+    }
+  }, [selectedTimesheet]);
 
   const onChangeTimePicker = (value) => {
     if (true) {
@@ -119,14 +148,13 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
     }
   };
 
-  const saveNew = () => {
-    createTimesheet(data);
+  const clear = () => {
     setData({
       matterCode: "",
       matterName: "",
       description: "",
       duration: "00:00",
-      date: moment(new Date()).format("yyyy-mm-DD"),
+      date: new Date(),
     });
     setSelectedValue(moment("Thu Dec 30 2021 00:00:00 GMT+0700"));
     setSuggestionState({
@@ -135,8 +163,28 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
     });
   };
 
+  const saveNew = () => {
+    createTimesheet(data);
+    clear();
+  };
+
   const saveDuplicate = () => {
     createTimesheet(data);
+  };
+
+  const handleDelete = () => {
+    deleteTimesheet(selectedTimesheet._id);
+    handleCancel();
+  };
+
+  const handleUpdate = () => {
+    updateTimesheet(data);
+    handleCancel();
+  };
+
+  const handleCancel = () => {
+    clear();
+    cancelSelect();
   };
 
   return (
@@ -171,7 +219,6 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
             Date:
           </span>
           <DatePicker
-            // dateFormat="DD/MM/YYYY"
             keyboardType="none"
             className="custom-input z-2"
             selected={data.date}
@@ -181,14 +228,6 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
           />
         </div>
         {/* duration input */}
-        {/* <TimePicker
-          value={selectedValue}
-          // className="input"
-          allowEmpty={false}
-          showHour={false}
-          style={{ width: "25%" }}
-          onChange={onChangeTimePicker}
-        /> */}
         <div
           style={{
             display: "flex",
@@ -224,26 +263,6 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
                 }}
               />
             </div>
-            {/* {chooseDuration ? (
-              <a
-                className="rounded"
-                style={{
-                  padding: 5,
-                  marginLeft: 5,
-                  backgroundColor: "#ca3636",
-                }}
-                onClick={() =>
-                  setData((prevState) => ({
-                    ...prevState,
-                    duration: `${hour < 10 ? "0" : ""}${hour}:${
-                      minute < 10 ? "0" : ""
-                    }${minute}`,
-                  }))
-                }
-              >
-                Done
-              </a>
-            ) : null} */}
           </div>
         </div>
       </div>
@@ -265,7 +284,6 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
         </div>
       )}
       <input
-        style={{ marginBottom: 20 }}
         value={suggestionState.value}
         type="text"
         placeholder="Matter name"
@@ -274,93 +292,51 @@ function TimeEntry({ matterNames, matterPairs, createTimesheet }) {
         // onBlur={changeBlur}
         // onFocus={changeBlur}
       />
+      <span className="mattercode-container">{data.matterCode}</span>
       {/* description input */}
-      {/* <textarea
+      <textarea
         value={data.description}
         type="text"
         placeholder="Description"
-        className="input"
+        className="custom-input w-100"
         onChange={onChangeDescription}
         onKeyDown={handleKeyPress}
-      /> */}
-      <div
-        style={{ width: "100%", marginBottom: 20 }}
-        className="d-flex flex-row align-items-center justify-content-between primary-font"
-      >
-        <div className="d-flex flex-column align-items-start w-100">
-          <TextareaAutosize
-            // onBlur={() =>
-            //   setData((prevState) => ({
-            //     ...prevState,
-            //     description: description,
-            //   }))
-            // }
-            value={data.description}
-            placeholder="Description"
-            onChange={onChangeDescription}
-            minRows={2}
-            className="custom-input w-100 primary-font"
-          />
-        </div>
-      </div>
+      />
 
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <a
-          className="button active"
-          style={{
-            width: "40%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-          onClick={saveNew}
-        >
-          <span
-            style={{
-              marginLeft: 5,
-              fontSize: 14,
-              fontWeight: "400",
-              color: "white",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
+      {editmode ? (
+        <div className="button-group">
+          <a className="button" style={{ width: "25%" }} onClick={handleUpdate}>
+            Update
+          </a>
+          <a className="button" style={{ width: "25%" }} onClick={handleDelete}>
+            Delete
+          </a>
+          <a className="button" style={{ width: "25%" }} onClick={handleCancel}>
+            Cancel
+          </a>
+        </div>
+      ) : (
+        <div className="button-group">
+          <a
+            className="button active"
+            style={{ width: "40%" }}
+            onClick={saveNew}
           >
             <AddCircleIcon style={{ marginRight: 5, width: 20, height: 20 }} />
             Save & New
-          </span>
-        </a>
-        <a
-          className="button active"
-          style={{ width: "40%" }}
-          onClick={saveDuplicate}
-        >
-          <span
-            style={{
-              marginLeft: 5,
-              fontSize: 14,
-              fontWeight: "400",
-              color: "white",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
+          </a>
+          <a
+            className="button active"
+            style={{ width: "40%" }}
+            onClick={saveDuplicate}
           >
             <ContentCopyIcon
               style={{ marginRight: 5, width: 20, height: 20 }}
             />
             Save & Duplicate
-          </span>
-        </a>
-      </div>
+          </a>
+        </div>
+      )}
     </div>
   );
 }

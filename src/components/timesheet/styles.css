@@ -34,10 +34,10 @@
 }
 
 .suggestion-container {
-  max-height: 250px;
+  max-height: 120px;
   overflow: auto;
-  width: 92%;
-  margin-top: 80px;
+  width: 94%;
+  margin-top: 100px;
   position: absolute;
   background-color: white;
   padding-top: 5px;
@@ -71,40 +71,26 @@
   font-family: "Source Sans Pro", sans-serif;
 }
 
-.button {
-  cursor: pointer;
-  border-radius: 5px;
+.button-group {
+  width: 100%;
+  margin-top: 20px;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background-color: #eeeeee;
-  color: #ca3636;
-  font-size: 14px;
 }
 
-.button.active {
-  background-color: #ca3636;
-  color: white;
+.mattercode-container {
+  font-family: "Source Sans Pro", sans-serif;
+  width: 100%;
+  margin-bottom: 20px;
+  margin-top: 5px;
 }
 
 .rc-time-picker-input {
   font-size: 12px !important;
   border: none !important;
   height: 35px !important;
-}
-
-.custom-input {
-  height: 35px !important;
-  border: 0.5px solid #666;
-  border-radius: 5px;
-  padding-left: 5px !important;
-  box-shadow: 1px 2px 2px 2px #eeeeee;
-}
-
-.custom-input:focus {
-  border: 1.5px solid #ca3636;
 }
 
 .custom-input-p {
@@ -137,4 +123,12 @@
 
 .w-100 {
   width: 100%;
+}
+
+.logout-button {
+  position: absolute;
+  left: 85%;
+  top: 15px;
+  color: black !important;
+  padding: 5px 20px !important;
 }
