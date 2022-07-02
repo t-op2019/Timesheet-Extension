@@ -12,6 +12,11 @@ export default defineConfig({
     // necessary for segment analytics lib to work
     global: {},
   },
+  build: {
+    rollupOptions: {
+      external: [/^jss-plugin-.*/],
+    },
+  },
   // resolve: {
   //   alias: [
   //     {
