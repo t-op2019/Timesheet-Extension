@@ -12,4 +12,15 @@ export default defineConfig({
     // necessary for segment analytics lib to work
     global: {},
   },
+  // resolve: {
+  //   alias: [
+  //     {
+  //       find: /^@material-ui\/pickers$/,
+  //       replacement: resolve(
+  //         __dirname,
+  //         "./node_modules/@material-ui/pickers/esm"
+  //       ),
+  //     },
+  //   ],
+  // },
 });

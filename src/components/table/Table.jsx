@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import moment from "moment";
 
 // components
-import { DataGrid } from "@mui/x-data-grid";
+import MaterialTable, { MTableToolbar } from "@material-table/core";
 
 // icons
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -12,6 +12,8 @@ import "./styles.css";
 
 function Table({ data, viewmode, matterPairs, toggle, deleteTimesheet }) {
   const [selections, setSelections] = useState([]);
+  const [dateStart, setDateStart] = useState(new Date());
+  const [dateEnd, setDateEnd] = useState(new Date());
 
   function RenderActions(param) {
     const [showActions, setShowActions] = useState(false);
@@ -65,51 +67,36 @@ function Table({ data, viewmode, matterPairs, toggle, deleteTimesheet }) {
         ]
       : [
           {
-            headerName: "Matter",
+            title: "Matter",
             field: "matterName",
-            width: 150,
-            renderCell: (param) => {
-              if (param.value == null) {
-                return "";
-              }
-
-              return (
-                <div>
-                  <div className="primary-font">{param.value}</div>
-                  <div style={{ fontSize: 10 }} className="primary-font">
-                    {matterPairs[param.value]}
-                  </div>
+            render: (rowData) => (
+              <div>
+                <div className="primary-font">{rowData.matterName}</div>
+                <div style={{ fontSize: 8 }} className="primary-font">
+                  {rowData.matterCode}
                 </div>
-              );
-            },
+              </div>
+            ),
+            width: 110,
           },
           {
-            headerName: "Description",
+            title: "Description",
             field: "description",
-            width: 200,
           },
           {
-            headerName: "Duration",
+            title: "Duration",
             field: "duration",
+            type: "numeric",
+            align: "left",
             width: 70,
           },
           {
-            headerName: "Date",
+            title: "Date",
             field: "date",
-            width: 100,
-            valueFormatter: (param) => {
-              if (param.value == null) {
-                return "";
-              }
-
-              return moment(param.value).format("DD/MM/YYYY");
+            render: (rowData) => {
+              return moment(rowData.date).format("DD/MM/YYYY");
             },
-          },
-          {
-            headerName: "",
-            field: "id",
-            width: 5,
-            renderCell: RenderActions,
+            width: 90,
           },
         ];
 
@@ -117,17 +104,111 @@ function Table({ data, viewmode, matterPairs, toggle, deleteTimesheet }) {
     setSelections(selection);
   };
 
+  const onChangeDateRangePicker = (props) => {
+    let startDate = props.startDate;
+    let endDate = props.endDate;
+    // dateRangeSearch(startDate, endDate);
+    setDateStart(startDate);
+    setDateEnd(endDate);
+  };
+
   return (
-    <div style={{ height: 500, width: "95%", fontSize: 12 }}>
-      <DataGrid
-        rows={data}
+    <div style={{ height: 500, width: "95%", fontSize: 14 }}>
+      <MaterialTable
+        data={data}
         columns={columns}
         pageSize={5}
-        rowsPerPageOptions={[5]}
         getRowHeight={() => "auto"}
-        // checkboxSelection
-        // selectionModel={selections}
-        // onSelectionModelChange={onSelectionChange}
+        rowsPerPageOptions={[5]}
+        className="primary-font"
+        style={{
+          fontSize: 12,
+        }}
+        options={{
+          draggable: false,
+          showTextRowsSelected: false,
+          selection: false,
+          paging: true,
+          pageSize: 10,
+          search: false,
+          showTitle: false,
+          rowStyle: {
+            height: 28,
+            fontFamily: "Source Sans Pro",
+            fontSize: 12,
+          },
+          headerStyle: {
+            paddingTop: 10,
+            paddingBottom: 10,
+            fontFamily: "Source Sans Pro",
+            backgroundColor: "#eee",
+            fontSize: 14,
+            fontWeight: "bold",
+          },
+          tableLayout: "fixed",
+        }}
+        onRowClick={(event, rowData) => {
+          console.log("rowData", rowData);
+        }}
+        components={{
+          Pagination: (props) => {
+            // let hour = 0;
+            // let minute = 0;
+            // // if viewmode is entry mode, calculate duration with timesheets state
+            // // else, caculate with all timesheets
+            // for (let i = 0; i < data.length; i++) {
+            //   hour += Number(timesheets[i].duration.slice(0, 2));
+            //   if (minute + Number(timesheets[i].duration.slice(3)) >= 60) {
+            //     hour += 1;
+            //     minute = minute + Number(timesheets[i].duration.slice(3)) - 60;
+            //   } else {
+            //     minute += Number(timesheets[i].duration.slice(3));
+            //   }
+            // }
+            // return (
+            //   <>
+            //     {viewmode === "matter" ? null : (
+            //       <div
+            //         style={{
+            //           backgroundColor: "#eee",
+            //           padding: 15,
+            //           fontSize: 14,
+            //           fontWeight: "bold",
+            //         }}
+            //         className="d-flex flex-row primary-font justify-content-between"
+            //       >
+            //         <div>
+            //           {`Total: ${hour < 10 ? "0" : ""}${hour}:${
+            //             minute < 10 ? "0" : ""
+            //           }${minute}`}
+            //         </div>
+            //         {viewmode === "timesheet" ? null : (
+            //           <div
+            //             className="d-flex flex-column"
+            //             style={{
+            //               color: hour < 30 || valid ? "#ca3636" : "green",
+            //             }}
+            //           >
+            //             {hour < 30 ? "At least 30 hours/week \n" : "\n"}
+            //             {valid ? "KM/BD & PR exceeded 25% total duration" : ""}
+            //           </div>
+            //         )}
+            //       </div>
+            //     )}
+            //     <TablePagination {...props} />
+            //   </>
+            // );
+          },
+          Toolbar: (props) => (
+            <div
+              style={{
+                height: "0px",
+              }}
+            >
+              <MTableToolbar {...props} />
+            </div>
+          ),
+        }}
       />
     </div>
   );

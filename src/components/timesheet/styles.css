@@ -81,9 +81,60 @@
   padding: 10px;
   background-color: #eeeeee;
   color: #ca3636;
+  font-size: 14px;
 }
 
 .button.active {
   background-color: #ca3636;
   color: white;
+}
+
+.rc-time-picker-input {
+  font-size: 12px !important;
+  border: none !important;
+  height: 35px !important;
+}
+
+.custom-input {
+  height: 35px !important;
+  border: 0.5px solid #666;
+  border-radius: 5px;
+  padding-left: 5px !important;
+  box-shadow: 1px 2px 2px 2px #eeeeee;
+}
+
+.custom-input:focus {
+  border: 1.5px solid #ca3636;
+}
+
+.custom-input-p {
+  background-color: #00000000;
+  outline: 0;
+  color: #000;
+  border-width: 0 0 1px;
+  border-color: #eeeeee;
+  padding-bottom: 5px;
+}
+
+.custom-input-title {
+  background-color: #00000000;
+  outline: 0;
+  color: #000;
+  font-weight: 500;
+  border-width: 0 0 0 0;
+}
+
+.custom-input-p.change-background {
+  color: #fff;
+}
+.custom-input-p:focus {
+  border-color: red;
+}
+
+.z-2 {
+  z-index: 900;
+}
+
+.w-100 {
+  width: 100%;
 }
