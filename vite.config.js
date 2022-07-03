@@ -14,7 +14,13 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: [/^jss-plugin-.*/],
+      external: [/node_modules/],
+      input: {
+        main: resolve(
+          "/Users/tinduvo/Desktop/vite/Timesheet Extension",
+          "index.html"
+        ),
+      },
     },
   },
   // resolve: {
