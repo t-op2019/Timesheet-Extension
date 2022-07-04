@@ -115,8 +115,6 @@ function TimeEntry({
   };
 
   const onClick = (suggestion) => {
-    console.log(suggestion);
-    console.log(matterPairs[suggestion]);
     setData((prevState) => ({
       ...prevState,
       matterName: suggestion,
@@ -304,20 +302,20 @@ function TimeEntry({
 
       {editmode ? (
         <div className="button-group">
-          <a className="button" style={{ width: "25%" }} onClick={handleUpdate}>
+          <a className="button active shadow" style={{ width: "25%" }} onClick={handleUpdate}>
             Update
           </a>
-          <a className="button" style={{ width: "25%" }} onClick={handleDelete}>
+          <a className="button shadow" style={{ width: "25%" }} onClick={handleDelete}>
             Delete
           </a>
-          <a className="button" style={{ width: "25%" }} onClick={handleCancel}>
+          <a className="button shadow" style={{ width: "25%" }} onClick={handleCancel}>
             Cancel
           </a>
         </div>
       ) : (
         <div className="button-group">
           <a
-            className="button active"
+            className="button active shadow"
             style={{ width: "40%" }}
             onClick={saveNew}
           >
@@ -325,7 +323,7 @@ function TimeEntry({
             Save & New
           </a>
           <a
-            className="button active"
+            className="button active shadow"
             style={{ width: "40%" }}
             onClick={saveDuplicate}
           >

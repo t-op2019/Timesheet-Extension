@@ -99,7 +99,6 @@ function Table({ data, viewmode, toggleSelect, matterPairs }) {
   };
 
   const handleRowlick = (param) => {
-    console.log(param.row);
     if (viewmode !== "All matters") {
       toggleSelect(param.row);
     }

@@ -10,7 +10,7 @@ function ButtonGroup({ viewmode, setViewmode, editmode }) {
           <a
             key={index}
             onClick={() => setViewmode(button)}
-            className={`button ${viewmode === button && "active"}`}
+            className={`button ${viewmode === button && "active"} shadow`}
             style={{ gridArea: `button-${index}` }}
           >
             {button}

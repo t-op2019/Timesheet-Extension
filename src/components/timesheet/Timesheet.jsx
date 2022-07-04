@@ -207,6 +207,7 @@ function Timesheet() {
   const selectTimesheet = (timesheet) => {
     setEditmode(true);
     setSelectedTimesheet(timesheet);
+    window.scrollTo(0, 0);
   };
 
   const handleLogout = () => {

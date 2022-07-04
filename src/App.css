@@ -103,3 +103,9 @@ button {
   border: 0.5px solid #666;
   border-radius: 5px;
 }
+
+.shadow {
+  box-shadow: 1px 2px 2px 2px #eeeeee;
+  border: 0.5px solid #666;
+  border-radius: 5px;
+}
