@@ -78,7 +78,12 @@ function Timesheet() {
 
     try {
       const res = await AxiosInstance.get(getAPI().matters);
-      setUserMatters(res.data.matters);
+      const matters = res.data.matters.map((matter) => {
+        let temp = { ...matter };
+        temp.id = matter._id;
+        return temp;
+      });
+      setUserMatters(matters);
     } catch (err) {
       console.log(err);
     }
@@ -87,7 +92,12 @@ function Timesheet() {
   const fetchTimesheets = async () => {
     try {
       const res = await AxiosInstance.get(getAPI().allTimesheets);
-      setAllTimesheets(res.data.timsheets);
+      const timesheets = res.data.timsheets.map((timesheet) => {
+        let temp = { ...timesheet };
+        temp.id = timesheet._id;
+        return temp;
+      });
+      setAllTimesheets(timesheets);
     } catch (err) {
       console.log(err);
     }
