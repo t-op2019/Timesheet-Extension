@@ -211,6 +211,7 @@ function Timesheet() {
 
       <a className="logout-button button" onClick={handleLogout}>
         <LogoutIcon style={{ width: 16 }} />
+        {/* Logout */}
       </a>
 
       <ButtonGroup
@@ -232,7 +233,12 @@ function Timesheet() {
         />
       )}
 
-      <Table data={data} viewmode={viewmode} toggleSelect={selectTimesheet} />
+      <Table
+        data={data}
+        viewmode={viewmode}
+        toggleSelect={selectTimesheet}
+        matterPairs={matterPairs}
+      />
     </div>
   );
 }

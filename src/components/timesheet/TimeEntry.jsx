@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 // components
 import TimePicker from "rc-time-picker";
 import DatePicker from "react-datepicker";
-import TextareaAutosize from "react-textarea-autosize";
 import "rc-time-picker/assets/index.css";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";

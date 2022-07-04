@@ -1,5 +1,5 @@
 .container {
-  min-width: 500px;
+  min-width: 550px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -127,7 +127,7 @@
 
 .logout-button {
   position: absolute;
-  left: 85%;
+  left: 86%;
   top: 15px;
   color: black !important;
   padding: 5px 20px !important;

@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import moment from "moment";
 
 // components
-import MaterialTable, { MTableToolbar } from "@material-table/core";
-
-// icons
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+// import MaterialTable, { MTableToolbar } from "@material-table/core";
+import { DataGrid } from "@mui/x-data-grid";
 
 // style
 import "./styles.css";
 
-function Table({ data, viewmode, toggleSelect }) {
+function Table({ data, viewmode, toggleSelect, matterPairs }) {
   const [dateStart, setDateStart] = useState(new Date());
   const [dateEnd, setDateEnd] = useState(new Date());
 
@@ -18,46 +16,47 @@ function Table({ data, viewmode, toggleSelect }) {
     viewmode === "All matters"
       ? [
           {
-            title: "Matter Code",
+            headerName: "Matter Code",
             field: "matterCode",
             width: 230,
           },
           {
-            title: "Matter Name",
+            headerName: "Matter Name",
             field: "matterName",
             width: 230,
           },
         ]
       : [
           {
-            title: "Matter",
+            headerName: "Matter",
             field: "matterName",
-            render: (rowData) => (
+            render: (param) => (
               <div>
-                <div className="primary-font">{rowData.matterName}</div>
+                <div className="primary-font">{param.value}</div>
                 <div style={{ fontSize: 8 }} className="primary-font">
-                  {rowData.matterCode}
+                  {matterPairs[param.value]}
                 </div>
               </div>
             ),
-            width: 110,
+            width: 140,
           },
           {
-            title: "Description",
+            headerName: "Description",
             field: "description",
+            width: 200,
           },
           {
-            title: "Duration",
+            headerName: "Duration",
             field: "duration",
             type: "numeric",
             align: "left",
             width: 70,
           },
           {
-            title: "Date",
+            headerName: "Date",
             field: "date",
-            render: (rowData) => {
-              return moment(rowData.date).format("DD/MM/YYYY");
+            renderCell: (param) => {
+              return moment(param.value).format("DD/MM/YYYY");
             },
             width: 90,
           },
@@ -95,9 +94,23 @@ function Table({ data, viewmode, toggleSelect }) {
     setDateEnd(endDate);
   };
 
+  const handleRowlick = (param) => {
+    console.log(param.row);
+    if (viewmode !== "All matters") {
+      toggleSelect(param.row);
+    }
+  };
+
   return (
     <div style={{ height: 500, width: "95%", fontSize: 14 }}>
-      <MaterialTable
+      <DataGrid
+        className="primary-font"
+        rows={data}
+        columns={columns}
+        getRowHeight={() => "auto"}
+        onRowClick={handleRowlick}
+      />
+      {/* <MaterialTable
         data={data}
         columns={columns}
         pageSize={5}
@@ -124,7 +137,7 @@ function Table({ data, viewmode, toggleSelect }) {
             </div>
           ),
         }}
-      />
+      /> */}
     </div>
   );
 }
