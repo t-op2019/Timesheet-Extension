@@ -22,6 +22,8 @@ function Timesheet() {
 
   const [editmode, setEditmode] = useState(false);
   const [viewmode, setViewmode] = useState("Time entry");
+  const [totalDuration, setTotalDuration] = useState("00:00");
+  const [allTotalDuration, setAllTotalDuration] = useState("00:00");
   const [timesheets, setTimesheets] = useState([]);
   const [allTimesheets, setAllTimesheets] = useState([]);
   const [userMatters, setUserMatters] = useState([]);
@@ -92,12 +94,25 @@ function Timesheet() {
   const fetchTimesheets = async () => {
     try {
       const res = await AxiosInstance.get(getAPI().allTimesheets);
+      let hour = 0,
+        minute = 0;
       const timesheets = res.data.timsheets.map((timesheet) => {
+        hour += Number(timesheet.duration.slice(0, 2));
+        minute += Number(timesheet.duration.slice(3));
+        if (minute >= 60) {
+          hour++;
+          minute -= 60;
+        }
         let temp = { ...timesheet };
         temp.id = timesheet._id;
         return temp;
       });
       setAllTimesheets(timesheets);
+      setAllTotalDuration(
+        `${hour < 10 ? `0${hour}` : hour}:${
+          minute < 10 ? `0${minute}` : minute
+        }`
+      );
     } catch (err) {
       console.log(err);
     }
@@ -127,13 +142,26 @@ function Timesheet() {
         date2: newDate2,
         query: "",
       });
+      let hour = 0,
+        minute = 0;
       const timesheets = res.data.timesheets.map((timesheet) => {
+        hour += Number(timesheet.duration.slice(0, 2));
+        minute += Number(timesheet.duration.slice(3));
+        if (minute >= 60) {
+          hour++;
+          minute -= 60;
+        }
         let temp = { ...timesheet };
         temp.id = timesheet._id;
         return temp;
       });
       if (viewmode === "Time entry") {
         setTimesheets(timesheets);
+        setTotalDuration(
+          `${hour < 10 ? `0${hour}` : hour}:${
+            minute < 10 ? `0${minute}` : minute
+          }`
+        );
       }
     } catch (err) {
       console.log(err);
@@ -250,6 +278,12 @@ function Timesheet() {
         toggleSelect={selectTimesheet}
         matterPairs={matterPairs}
       />
+
+      {viewmode !== "All matters" && (
+        <span className="total-duration-container">
+          {viewmode === "Time entry" ? totalDuration : allTotalDuration}
+        </span>
+      )}
     </div>
   );
 }

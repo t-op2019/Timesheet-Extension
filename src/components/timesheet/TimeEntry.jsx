@@ -186,35 +186,10 @@ function TimeEntry({
 
   return (
     <div className="entry-container">
-      <div
-        style={{
-          width: "100%",
-          marginBottom: 20,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="top-entry-container">
         {/* calendar input */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span
-            style={{
-              fontSize: 14,
-              color: "#666",
-              fontWeight: "bold",
-              marginRight: 10,
-            }}
-          >
-            Date:
-          </span>
+        <div className="date-time-container">
+          <span className="entry-title">Date:</span>
           <DatePicker
             keyboardType="none"
             className="custom-input z-2"
@@ -225,25 +200,8 @@ function TimeEntry({
           />
         </div>
         {/* duration input */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span
-            style={{
-              fontSize: 14,
-              color: "#666",
-              fontWeight: "bold",
-              marginLeft: 10,
-              marginRight: 10,
-            }}
-          >
-            Duration:
-          </span>
+        <div className="date-time-container">
+          <span className="entry-title">Duration:</span>
           <div className="d-flex flex-row w-100 align-items-center">
             <div className="d-flex flex-column align-items-start primary-font custom-input">
               <TimePicker
@@ -302,13 +260,25 @@ function TimeEntry({
 
       {editmode ? (
         <div className="button-group">
-          <a className="button active shadow" style={{ width: "25%" }} onClick={handleUpdate}>
+          <a
+            className="button active shadow"
+            style={{ width: "25%" }}
+            onClick={handleUpdate}
+          >
             Update
           </a>
-          <a className="button shadow" style={{ width: "25%" }} onClick={handleDelete}>
+          <a
+            className="button shadow"
+            style={{ width: "25%" }}
+            onClick={handleDelete}
+          >
             Delete
           </a>
-          <a className="button shadow" style={{ width: "25%" }} onClick={handleCancel}>
+          <a
+            className="button shadow"
+            style={{ width: "25%" }}
+            onClick={handleCancel}
+          >
             Cancel
           </a>
         </div>
