@@ -20,7 +20,7 @@ function TimeEntry({
   updateTimesheet,
   cancelSelect,
 }) {
-  // const role = JSON.parse(localStorage.getItem("user")).role;
+  const role = JSON.parse(localStorage.getItem("user")).role;
   const [selectedValue, setSelectedValue] = useState(
     moment("Thu Dec 30 2021 00:00:00 GMT+0700")
   );
@@ -61,7 +61,7 @@ function TimeEntry({
   }, [selectedTimesheet]);
 
   const onChangeTimePicker = (value) => {
-    if (true) {
+    if (role !== "admin" && role !== "secretary") {
       if (value.format("mm") == 3) {
         setData((prevState) => ({
           ...prevState,
