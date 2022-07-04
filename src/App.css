@@ -80,3 +80,26 @@ button {
   background-color: #ca3636;
   color: white;
 }
+
+.MuiDataGrid-viewport,
+.MuiDataGrid-row,
+.MuiDataGrid-renderingZone {
+  max-height: fit-content !important;
+}
+
+.MuiDataGrid-cell {
+  max-height: fit-content !important;
+  overflow: auto;
+  white-space: initial !important;
+  line-height: 16px !important;
+  display: flex !important;
+  align-items: center;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.MuiDataGrid-main {
+  box-shadow: 1px 2px 2px 2px #eeeeee;
+  border: 0.5px solid #666;
+  border-radius: 5px;
+}

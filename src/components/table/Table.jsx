@@ -30,6 +30,7 @@ function Table({ data, viewmode, toggleSelect, matterPairs }) {
           {
             headerName: "Matter",
             field: "matterName",
+            renderHeader: (param) => <strong>Matter</strong>,
             render: (param) => (
               <div>
                 <div className="primary-font">{param.value}</div>
@@ -43,11 +44,13 @@ function Table({ data, viewmode, toggleSelect, matterPairs }) {
           {
             headerName: "Description",
             field: "description",
+            renderHeader: (param) => <strong>Description</strong>,
             width: 200,
           },
           {
             headerName: "Duration",
             field: "duration",
+            renderHeader: (param) => <strong>Duration</strong>,
             type: "numeric",
             align: "left",
             width: 70,
@@ -55,6 +58,7 @@ function Table({ data, viewmode, toggleSelect, matterPairs }) {
           {
             headerName: "Date",
             field: "date",
+            renderHeader: (param) => <strong>Date</strong>,
             renderCell: (param) => {
               return moment(param.value).format("DD/MM/YYYY");
             },
@@ -105,9 +109,13 @@ function Table({ data, viewmode, toggleSelect, matterPairs }) {
     <div style={{ height: 500, width: "95%", fontSize: 14 }}>
       <DataGrid
         className="primary-font"
+        sx={{
+          fontSize: 12,
+        }}
+        options={options}
         rows={data}
         columns={columns}
-        getRowHeight={() => "auto"}
+        pageSize={7}
         onRowClick={handleRowlick}
       />
       {/* <MaterialTable
