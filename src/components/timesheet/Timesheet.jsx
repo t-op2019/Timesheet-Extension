@@ -49,8 +49,12 @@ function Timesheet() {
     // get current date
     const lastDate = currentDate.getDate();
 
+    const thisWeekLastDate =
+      currentDate.getDate() - dateIndex[currentDate.getDay()] + 6;
+
     const dateStart = new Date(currentDate.setDate(firstDate));
     const dateEnd = new Date(currentDate.setDate(lastDate));
+    const thisWeekDateEnd = new Date(currentDate.setDate(thisWeekLastDate));
     const firstDay = dateStart.getDate();
     const lastDay = dateEnd.getDate();
 
@@ -58,7 +62,7 @@ function Timesheet() {
       dateEnd.setMonth(dateEnd.getMonth() + 1);
     }
 
-    dateRangeSearch(dateStart, dateEnd);
+    dateRangeSearch(dateStart, thisWeekDateEnd);
   }, []);
 
   const fetchMatters = async () => {
@@ -145,23 +149,31 @@ function Timesheet() {
       let hour = 0,
         minute = 0;
       const timesheets = res.data.timesheets.map((timesheet) => {
-        hour += Number(timesheet.duration.slice(0, 2));
-        minute += Number(timesheet.duration.slice(3));
-        if (minute >= 60) {
-          hour++;
-          minute -= 60;
+        const date = new Date(timesheet.date).getDate();
+        const thisWeekStartDate =
+          new Date().getDate() - dateIndex[new Date().getDay()];
+        const thisWeekLastDate =
+          new Date().getDate() - dateIndex[new Date().getDay()] + 6;
+
+        if (date >= thisWeekStartDate && date <= thisWeekLastDate) {
+          hour += Number(timesheet.duration.slice(0, 2));
+          minute += Number(timesheet.duration.slice(3));
+          if (minute >= 60) {
+            hour++;
+            minute -= 60;
+          }
         }
         let temp = { ...timesheet };
         temp.id = timesheet._id;
         return temp;
       });
       if (viewmode === "Time entry") {
-        setTimesheets(timesheets);
         setTotalDuration(
           `${hour < 10 ? `0${hour}` : hour}:${
             minute < 10 ? `0${minute}` : minute
           }`
         );
+        setTimesheets(timesheets);
       }
     } catch (err) {
       console.log(err);
@@ -281,7 +293,9 @@ function Timesheet() {
 
       {viewmode !== "All matters" && (
         <span className="total-duration-container">
-          {viewmode === "Time entry" ? totalDuration : allTotalDuration}
+          {viewmode === "Time entry"
+            ? `Total hour this week: ${totalDuration}`
+            : `Total hour: ${allTotalDuration}`}
         </span>
       )}
     </div>
